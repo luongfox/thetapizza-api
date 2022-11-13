@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  app:
+    image: node:18-alpine
+    volumes:
+      - .:/theta/app
+      - modules_vol:/theta/app/node_modules
+    networks:
+      - theta
+    restart: unless-stopped
+    links:
+      - mongo
+      - redis
+    working_dir: /theta/app
+    command: sh -c "npm install && npm install --global serve && serve"
+
+  mongo:
+    image: mongo:5.0.3
+    volumes:
+       - mongo_vol:/theta/data/mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - theta
+    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_vol:/theta/data/redis
+    networks:
+      - theta
+
+networks:
+  theta:
+    driver: bridge
+
+volumes:
+  modules_vol:
+    driver: local
+  mongo_vol:
+    driver: local
+  redis_vol:
+    driver: local
+

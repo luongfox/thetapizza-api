@@ -1,20 +1,22 @@
 import { getLatestTdropTransfers, getLatestTransactions, getStakeBySourceAndHolder } from '../api/theta.js';
 import { getCoins } from '../api/prices.js';
-import { THETA_WEI, DECIMALS, TDROP_STAKING_ADDRESS } from '../helper/constants.js';
-import { useDb } from '../db/db.js';
+import { THETA_WEI, DECIMALS, TDROP_STAKING_ADDRESS, TRACKING_USD_MIN } from '../helper/constants.js';
 import BigNumber from 'bignumber.js';
+import { useDb } from '../db/db.js';
+import { AccountDao } from '../db/account-dao.js';
+import { formatNumber, makeTransactionUrl } from '../helper/utils.js';
+import { tweet } from '../api/twitter.js';
 
 BigNumber.config({ DECIMAL_PLACES: DECIMALS });
 
 (async () => {
-  await main().catch(console.error);
-  process.exit();
+  await useDb(main).catch(console.error);
 })();
 
-async function main() {
-  const { connection, db } = await useDb();
+async function main(db) {
   const coins = await getCoins();
   const transactions = await getLatestTransactions();
+
   const data = [];
   for (const transaction of transactions) {
     if (transaction.type === 2) { // transfer
@@ -171,6 +173,12 @@ async function main() {
     });
   }
 
+  const accountDao = new AccountDao(db);
+  const accounts = await accountDao.getAll();
+  const formatAmount = (item) => {
+    return formatNumber(item.coins, 2) + ' $' + item.currency + ' ($' + formatNumber(item.usd, 2) + ')';
+  }
+
   for (let item of data) {
     const result = await db.collection('transactions').updateOne(
       { _id: item._id },
@@ -179,6 +187,38 @@ async function main() {
     );
     if (!result.upsertedId) {
       continue;
+    }
+
+    if (item.usd >= TRACKING_USD_MIN) {
+      if (item.type_name == 'transfer') {
+        let fromTo = 'from an unknown wallet';
+        if (accounts[item.from] && accounts[item.to]) {
+          fromTo = 'from ' + accounts[item.from]['name'] + ' to ' + accounts[item.to]['name'];
+        } else if (accounts[item.from]) {
+          fromTo = 'from ' + accounts[item.from]['name'];
+        } else if (accounts[item.to]) {
+          fromTo = 'to ' + accounts[item.to]['name'];
+        }
+        const text = formatAmount(item) + ' transferred ' + fromTo + ' ' + makeTransactionUrl(item._id);
+        tweet(text);
+
+      } else if (item.type_name == 'stake_tdrop') {
+
+      } else if (item.type_name == 'stake_elite') {
+
+      } else if (item.type_name == 'stake_guardian') {
+
+      } else if (item.type_name == 'stake_validator') {
+
+      } else if (item.type_name == 'withdraw_tdrop') {
+
+      } else if (item.type_name == 'withdraw_elite') {
+
+      } else if (item.type_name == 'withdraw_guardian') {
+
+      } else if (item.type_name == 'withdraw_validator') {
+        
+      }
     }
   }
  

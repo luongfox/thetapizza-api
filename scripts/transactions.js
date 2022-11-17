@@ -175,9 +175,23 @@ async function main(db) {
 
   const accountDao = new AccountDao(db);
   const accounts = await accountDao.getAll();
+
   const formatAmount = (item) => {
     return formatNumber(item.coins, 2) + ' $' + item.currency + ' ($' + formatNumber(item.usd, 2) + ')';
-  }
+  };
+
+  const tweetTransaction = (item, gapText) => {
+    let fromTo = 'from an unknown wallet';
+    if (accounts[item.from] && accounts[item.to]) {
+      fromTo = 'from ' + accounts[item.from]['name'] + ' to ' + accounts[item.to]['name'];
+    } else if (accounts[item.from]) {
+      fromTo = 'from ' + accounts[item.from]['name'];
+    } else if (accounts[item.to]) {
+      fromTo = 'to ' + accounts[item.to]['name'];
+    }
+    const text = formatAmount(item) + ' ' + gapText + ' ' + fromTo + ' ' + makeTransactionUrl(item._id);
+    tweet(text);
+  };
 
   for (let item of data) {
     const result = await db.collection('transactions').updateOne(
@@ -191,33 +205,23 @@ async function main(db) {
 
     if (item.usd >= TRACKING_USD_MIN) {
       if (item.type_name == 'transfer') {
-        let fromTo = 'from an unknown wallet';
-        if (accounts[item.from] && accounts[item.to]) {
-          fromTo = 'from ' + accounts[item.from]['name'] + ' to ' + accounts[item.to]['name'];
-        } else if (accounts[item.from]) {
-          fromTo = 'from ' + accounts[item.from]['name'];
-        } else if (accounts[item.to]) {
-          fromTo = 'to ' + accounts[item.to]['name'];
-        }
-        const text = formatAmount(item) + ' transferred ' + fromTo + ' ' + makeTransactionUrl(item._id);
-        tweet(text);
-
+        tweetTransaction(item, 'transferred');
       } else if (item.type_name == 'stake_tdrop') {
-
+        tweetTransaction(item, 'staked');
       } else if (item.type_name == 'stake_elite') {
-
+        tweetTransaction(item, 'staked as elite');
       } else if (item.type_name == 'stake_guardian') {
-
+        tweetTransaction(item, 'staked as guardian');
       } else if (item.type_name == 'stake_validator') {
-
+        tweetTransaction(item, 'staked as validator');
       } else if (item.type_name == 'withdraw_tdrop') {
-
+        tweetTransaction(item, 'withdrawn');
       } else if (item.type_name == 'withdraw_elite') {
-
+        tweetTransaction(item, 'withdrawn as lite');
       } else if (item.type_name == 'withdraw_guardian') {
-
+        tweetTransaction(item, 'withdrawn as guardian');
       } else if (item.type_name == 'withdraw_validator') {
-        
+        tweetTransaction(item, 'withdrawn as validator');
       }
     }
   }

@@ -203,7 +203,7 @@ async function main(db) {
       continue;
     }
 
-    if (item.usd >= TRACKING_USD_MIN) {
+    if (item.usd >= TRACKING_USD_MIN || ['stake_validator', 'withdraw_validator'].includes(item.type_name)) {
       if (item.type_name == 'transfer') {
         tweetTransaction(item, 'transferred');
       } else if (item.type_name == 'stake_tdrop') {

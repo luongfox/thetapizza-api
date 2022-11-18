@@ -1,9 +1,10 @@
-import { getTfuelStakings, getThetaStakings } from '../api/theta.js';
-import { useDb } from '../db/db.js';
-import { StakeDao } from '../db/stake-dao.js';
+import ThetaApi from '../api/theta-api.js';
+import DB from '../db/db.js';
+import StakeDao from '../db/stake-dao.js';
 
 (async () => {
-  await useDb(main).catch(console.error);
+  await DB.useMongo(main).catch(console.error);
+  process.exit(0);
 })();
 
 async function main(db) {
@@ -19,7 +20,7 @@ async function main(db) {
     }
   }
   await stakeDao.deleteAll();
-  await persistStakes(await getTfuelStakings());
-  await persistStakes(await getThetaStakings());
+  await persistStakes(await ThetaApi.getTfuelStakings());
+  await persistStakes(await ThetaApi.getThetaStakings());
 }
   

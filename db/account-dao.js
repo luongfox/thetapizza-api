@@ -1,4 +1,4 @@
-export const AccountDao = class {
+export default class AccountDao {
 
   constructor(db) {
     this.db = db;

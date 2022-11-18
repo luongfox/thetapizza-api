@@ -12,7 +12,7 @@ export const THETA_WEI = '1000000000000000000';
 export const TDROP_CONTRACT_ID = '0x1336739b05c7ab8a526d40dcc0d04a826b5f8b03';
 export const TDROP_STAKING_ADDRESS = '0xa89c744db76266eca60e2b0f62afcd1f8581b7ed';
 
-export const TRACKING_USD_MIN = 500000;
+export const TRACKING_USD_MIN = 300000;
 
 export const DL_ENDPOINT = 'https://api.llama.fi';
 

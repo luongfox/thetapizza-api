@@ -8,6 +8,15 @@ export default class TwitterApi {
     return await client.v2.tweet('[Bot] ' + text);
   }
 
+  static async dailyUpdate(text, imagePath) {
+    const client = this.#getAppClient();
+    const imageId = await client.v1.uploadMedia(imagePath);
+    const params = {
+      media: { media_ids: [ imageId ] }
+    };
+    return await client.v2.tweet('[Bot] ' + text, params);
+  }
+
   static #getAppClient() {
     return new TwitterApiV2({
       appKey: TWITTER_CONSUMER_KEY,

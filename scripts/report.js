@@ -8,6 +8,7 @@ import Factory from '../helper/factory.js';
 import Utils from '../helper/utils.js';
 import PriceApi from '../api/price-api.js';
 import { TDROP_MAX_SUPPLY } from '../helper/constants.js';
+import TwitterApi from '../api/twitter-api.js';
 
 (async () => {
   await DB.useMongo(main).catch(console.error);
@@ -210,6 +211,8 @@ async function main(db) {
 
   const buffer = await canvas.toBuffer('image/png');
   fs.writeFileSync(reportImage, buffer);
+
+  await TwitterApi.dailyUpdate('#THETA daily update ' + (today.getUTCFullYear() + '-' + today.getUTCMonth() + '-' + today.getUTCDate()), reportImage);
 
 }
   

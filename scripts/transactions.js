@@ -1,21 +1,23 @@
-import { getLatestTdropTransfers, getLatestTransactions, getStakeBySourceAndHolder } from '../api/theta.js';
-import { getCoins } from '../api/prices.js';
+import ThetaApi from '../api/theta-api.js';
 import { THETA_WEI, DECIMALS, TDROP_STAKING_ADDRESS, TRACKING_USD_MIN } from '../helper/constants.js';
 import BigNumber from 'bignumber.js';
-import { useDb } from '../db/db.js';
-import { AccountDao } from '../db/account-dao.js';
-import { formatNumber, makeTransactionUrl } from '../helper/utils.js';
-import { tweet } from '../api/twitter.js';
+import DB from '../db/db.js';
+import AccountDao from '../db/account-dao.js';
+import TransactionDao from '../db/transaction-dao.js';
+import Factory from '../helper/factory.js';
+import Utils from '../helper/utils.js';
+import TwitterApi from '../api/twitter-api.js';
 
 BigNumber.config({ DECIMAL_PLACES: DECIMALS });
 
 (async () => {
-  await useDb(main).catch(console.error);
+  await DB.useMongo(main).catch(console.error);
+  process.exit(0);
 })();
 
 async function main(db) {
-  const coins = await getCoins();
-  const transactions = await getLatestTransactions();
+  const coins = await Factory.getCoins();
+  const transactions = await ThetaApi.getLatestTransactions();
 
   const data = [];
   for (const transaction of transactions) {
@@ -147,7 +149,7 @@ async function main(db) {
     }
   }
 
-  const tdropTransfers = await getLatestTdropTransfers();
+  const tdropTransfers = await ThetaApi.getLatestTdropTransfers();
   for (const transfer of tdropTransfers) {
     let type = 100;
     let transferType = 'transfer';
@@ -173,11 +175,12 @@ async function main(db) {
     });
   }
 
+  const transactionDao = new TransactionDao(db);
   const accountDao = new AccountDao(db);
   const accounts = await accountDao.getAll();
 
   const formatAmount = (item) => {
-    return formatNumber(item.coins, 2) + ' $' + item.currency + ' ($' + formatNumber(item.usd, 2) + ')';
+    return Utils.formatNumber(item.coins, 2) + ' $' + item.currency + ' ($' + Utils.formatNumber(item.usd, 2) + ')';
   };
 
   const tweetTransaction = (item, gapText) => {
@@ -190,15 +193,11 @@ async function main(db) {
       fromTo = 'to ' + accounts[item.to]['name'];
     }
     const text = formatAmount(item) + ' ' + gapText + ' ' + fromTo + ' ' + makeTransactionUrl(item._id);
-    tweet(text);
+    TwitterApi.tweet(text);
   };
 
   for (let item of data) {
-    const result = await db.collection('transactions').updateOne(
-      { _id: item._id },
-      { $set: item },
-      { upsert: true }
-    );
+    const result = await transactionDao.upsert(item);
     if (!result.upsertedId) {
       continue;
     }

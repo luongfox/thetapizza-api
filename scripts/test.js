@@ -1,12 +1,14 @@
 import { useDb } from '../db/db.js';
-import { AccountDao } from '../db/account-dao.js';
+import ThetaApi from '../api/theta-api.js';
+import PriceApi from '../api/price-api.js';
+import DataFactory from '../helper/data-factory.js';
 
 (async () => {
   await useDb(main).catch(console.error);
+  process.exit();
 })();
 
 async function main(db) {
-  const accountDao = new AccountDao(db);
-  const accounts = await accountDao.getAll();
-  console.log(accounts);
+  console.log(await PriceApi.getTVL());
+  
 }

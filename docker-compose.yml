@@ -2,7 +2,9 @@ version: "3.2"
 
 services:
   app:
-    image: node:18-alpine
+    build:
+      context: ./
+      dockerfile: Dockerfile
     volumes:
       - .:/theta/app
       - modules_vol:/theta/app/node_modules

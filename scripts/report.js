@@ -23,8 +23,13 @@ async function main(db) {
 
   const __dirname = path.resolve();
   const reportImage = __dirname + '/public/images/report.png';
-  const bgImage = __dirname + '/public/images/dailybg_green.png';
   const logoImage = __dirname + '/public/images/tfuel2.png';
+
+  let bgImage = __dirname + '/public/images/dailybg_green.png';
+  if (coins.THETA.price_change_24h <= 0 && coins.TFUEL.price_change_24h <= 0) {
+    bgImage = __dirname + '/public/images/dailybg_red.png';
+  }
+  
   const bgWidth = 504;
   const bgHeight = 504;
 

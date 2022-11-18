@@ -13,5 +13,5 @@ import Utils from '../helper/utils.js';
 })();
 
 async function main(db) {
-  console.log(await ThetaApi.getTfuelDailyBurnt());
+  console.log(Utils.formatNumber(0.005279919890236563, 5));
 }

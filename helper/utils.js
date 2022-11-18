@@ -8,7 +8,7 @@ export default class Utils {
       return THETA_EXPLORER_URL + '/txs/' +  transactionId;
   }
 
-  static formatNumber(number, precision, unit = '') {
+  static formatNumber(number, precision = 0, unit = '') {
     let unit2 = '';
     if (unit == 'auto') {
       if (number >= 1000000000) {
@@ -27,7 +27,7 @@ export default class Utils {
     } else if (unit2 == 'K') {
       number2 = number2 / 1000;
     }
-    let number3 = parseFloat(number2.toFixed(precision)).toLocaleString().replace(/\.0+$/, '');
+    let number3 = parseFloat(number2.toFixed(precision)).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 4 }).replace(/\.0+$/, '');
     return number3 + unit2;
   }
 

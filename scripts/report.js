@@ -214,5 +214,6 @@ async function main(db) {
 
   await TwitterApi.dailyUpdate('#THETA daily update ' + (today.getUTCFullYear() + '-' + (today.getUTCMonth() + 1) + '-' + today.getUTCDate()), reportImage);
 
+  fs.unlink(reportImage);
 }
   

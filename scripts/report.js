@@ -122,12 +122,12 @@ async function main(db) {
   const tdropTotalStaked = await ThetaApi.getTdropTotalStaked();
   const tdropSupply = await ThetaApi.getTdropSupply();
   const tdropTotalStakedPercentage = Utils.formatNumber((tdropTotalStaked / tdropSupply) * 100, 2);
-  text = 'Stakes: $' + Utils.formatNumber(tdropTotalStaked, 2, 'auto') + ' (' + tdropTotalStakedPercentage + '%)';
+  text = 'Stakes: ' + Utils.formatNumber(tdropTotalStaked, 3, 'auto') + ' (' + tdropTotalStakedPercentage + '%)';
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
   const tdropSupplyPercentage = Utils.formatNumber((tdropSupply / TDROP_MAX_SUPPLY) * 100, 2);
-  text = 'Supply: $' + Utils.formatNumber(tdropSupply, 2, 'auto') + ' (' + tdropSupplyPercentage + '%)';
+  text = 'Supply: ' + Utils.formatNumber(tdropSupply, 2, 'auto') + ' (' + tdropSupplyPercentage + '%)';
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
@@ -162,7 +162,7 @@ async function main(db) {
   y2 += hSpacing;
   const thetaTotalStaked = await ThetaApi.getThetaTotalAmountStaked();
   const thetaTotalStakedPercentage = Utils.formatNumber((thetaTotalStaked / 1000000000) * 100, 2);
-  text = 'Stakes: $' + Utils.formatNumber(thetaTotalStaked, 2, 'auto') + ' (' + thetaTotalStakedPercentage + '%)';
+  text = 'Stakes: ' + Utils.formatNumber(thetaTotalStaked, 3, 'auto') + ' (' + thetaTotalStakedPercentage + '%)';
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
@@ -197,7 +197,7 @@ async function main(db) {
   const tfuelTotalStaked = await ThetaApi.getTfuelTotalAmountStaked();
   const tfuelTotalSupply = await ThetaApi.getTfuelSupply();
   const tfuelTotalStaledPercentage = Utils.formatNumber((tfuelTotalStaked / tfuelTotalSupply) * 100, 2);
-  text = 'Stakes: $' + Utils.formatNumber(tfuelTotalStaked, 2, 'auto') + ' (' + tfuelTotalStaledPercentage + '%)';
+  text = 'Stakes: ' + Utils.formatNumber(tfuelTotalStaked, 3, 'auto') + ' (' + tfuelTotalStaledPercentage + '%)';
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;

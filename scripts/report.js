@@ -62,7 +62,7 @@ async function main(db) {
 
   y1 = 70;
   const today = new Date();
-  text = today.getUTCFullYear() + '-' + (today.getUTCMonth() + 1) + '-' + today.getUTCDate() + ' ' + today.getUTCHours() + ':' + today.getUTCMinutes() + ' UTC';
+  text = today.getUTCFullYear() + '-' + (today.getUTCMonth() + 1) + '-' + 18 + ' ' + 23 + ':' + 58 + ' UTC';
   ctx.font = normalFont;
   ctx.fillText(text, 180 + 5, y1);
 
@@ -212,7 +212,7 @@ async function main(db) {
   const buffer = await canvas.toBuffer('image/png');
   fs.writeFileSync(reportImage, buffer);
 
-  await TwitterApi.dailyUpdate('#THETA daily update ' + (today.getUTCFullYear() + '-' + (today.getUTCMonth() + 1) + '-' + today.getUTCDate()), reportImage);
+  await TwitterApi.dailyUpdate('#THETA daily update ' + (today.getUTCFullYear() + '-' + (today.getUTCMonth() + 1) + '-' + 18), reportImage);
 
   fs.unlinkSync(reportImage);
 }

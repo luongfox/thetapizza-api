@@ -4,18 +4,20 @@ services:
   app:
     build:
       context: ./
-      dockerfile: Dockerfile
+      target: development
+    image: thetaserver:dev
+    ports:
+      - "3001:3000"
     volumes:
-      - .:/theta/app
-      - modules_vol:/theta/app/node_modules
+      - .:/app
+      - modules_vol:/app/node_modules
     networks:
       - theta
     restart: unless-stopped
     links:
       - mongo
       - redis
-    working_dir: /theta/app
-    command: sh -c "npm install && npm install --global serve && serve"
+    working_dir: /app
 
   mongo:
     image: mongo:5.0.3

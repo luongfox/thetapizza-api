@@ -12,7 +12,7 @@ ENV NODE_ENV=development
 EXPOSE 3000
 RUN npm install
 COPY . .
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]
 
 # Start production
 FROM base AS production
@@ -21,4 +21,4 @@ ENV NODE_ENV=production
 EXPOSE 3000
 RUN npm install --production
 COPY . .
-CMD ["npm", "start:prod"]
+CMD ["npm", "run", "prod"]

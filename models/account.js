@@ -7,7 +7,7 @@ export default class Account {
   static async getAll() {
     const collection = await MDB.use(this.#collection);
     const objects = await collection.find().toArray();
-    const accounts = [];
+    const accounts = {};
     for (const each of objects) {
       accounts[each._id] = each;
     }

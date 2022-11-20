@@ -3,9 +3,11 @@ import Account from '../models/account.js';
 export default class ThetaController {
     
   static async prices(req, res) {
-    res.json({
+    const accounts = await Account.getAll();
+    console.log(accounts);
+    res.status(200).json({
       success: true,
-      data: await Account.getAll()
+      data: accounts
     });
   }
 }

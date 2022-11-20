@@ -8,7 +8,7 @@ const HOST = '0.0.0.0';
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use('/api/v1', apiRoutes);
+app.use('/v1', apiRoutes);
 app.use(express.static('public'));
 
 app.listen(PORT, HOST, () => {

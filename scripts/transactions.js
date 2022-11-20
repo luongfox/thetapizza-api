@@ -1,23 +1,21 @@
-import ThetaApi from '../api/theta-api.js';
-import { THETA_WEI, DECIMALS, TDROP_STAKING_ADDRESS, TRACKING_USD_MIN } from '../helper/constants.js';
+import '../boostrap.js';
+import Theta from '../services/theta.js';
+import { THETA_WEI, DECIMALS, TDROP_STAKING_ADDRESS, TRACKING_USD_MIN } from '../helpers/constants.js';
 import BigNumber from 'bignumber.js';
-import DB from '../db/db.js';
-import AccountDao from '../db/account-dao.js';
-import TransactionDao from '../db/transaction-dao.js';
-import Factory from '../helper/factory.js';
-import Utils from '../helper/utils.js';
-import TwitterApi from '../api/twitter-api.js';
-
-BigNumber.config({ DECIMAL_PLACES: DECIMALS });
+import Account from '../models/account.js';
+import Transaction from '../models/transaction.js';
+import Factory from '../services/factory.js';
+import Utils from '../helpers/utils.js';
+import Twitter from '../services/twitter.js';
 
 (async () => {
-  await DB.useMongo(main).catch(console.error);
+  await main().catch(console.error);
   process.exit(0);
 })();
 
-async function main(db) {
+async function main() {
   const coins = await Factory.getCoins();
-  const transactions = await ThetaApi.getLatestTransactions();
+  const transactions = await Theta.getLatestTransactions();
 
   const data = [];
   for (const transaction of transactions) {
@@ -99,7 +97,7 @@ async function main(db) {
       });
 
     } else if (transaction.type === 9) { // withdraw
-      const stake = await getStakeBySourceAndHolder(transaction['data']['source']['address'], transaction['data']['holder']['address']);
+      const stake = await Theta.getStakeBySourceAndHolder(transaction['data']['source']['address'], transaction['data']['holder']['address']);
       if (!stake) {
         continue;
       }
@@ -149,7 +147,7 @@ async function main(db) {
     }
   }
 
-  const tdropTransfers = await ThetaApi.getLatestTdropTransfers();
+  const tdropTransfers = await Theta.getLatestTdropTransfers();
   for (const transfer of tdropTransfers) {
     let type = 100;
     let transferType = 'transfer';
@@ -175,9 +173,7 @@ async function main(db) {
     });
   }
 
-  const transactionDao = new TransactionDao(db);
-  const accountDao = new AccountDao(db);
-  const accounts = await accountDao.getAll();
+  const accounts = await Account.getAll();
 
   const formatAmount = (item) => {
     return Utils.formatNumber(item.coins, 2) + ' $' + item.currency + ' ($' + Utils.formatNumber(item.usd, 2) + ')';
@@ -192,12 +188,12 @@ async function main(db) {
     } else if (accounts[item.to]) {
       fromTo = 'to ' + accounts[item.to]['name'];
     }
-    const text = formatAmount(item) + ' ' + gapText + ' ' + fromTo + ' ' + makeTransactionUrl(item._id);
-    TwitterApi.tweet(text);
+    const text = formatAmount(item) + ' ' + gapText + ' ' + fromTo + ' ' + Utils.makeTransactionUrl(item._id);
+    Twitter.tweet(text);
   };
 
   for (let item of data) {
-    const result = await transactionDao.upsert(item);
+    const result = await Transaction.upsert(item);
     if (!result.upsertedId) {
       continue;
     }

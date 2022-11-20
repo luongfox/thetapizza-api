@@ -1,25 +1,23 @@
-import ThetaApi from '../api/theta-api.js';
-import DB from '../db/db.js';
-import StakeDao from '../db/stake-dao.js';
+import '../boostrap.js';
+import Theta from '../services/theta.js';
+import Stake from '../models/stake.js';
 import path from 'path';
 import fs from 'fs';
 import { loadImage, createCanvas, registerFont } from 'canvas';
-import Factory from '../helper/factory.js';
-import Utils from '../helper/utils.js';
-import PriceApi from '../api/price-api.js';
-import { TDROP_MAX_SUPPLY } from '../helper/constants.js';
-import TwitterApi from '../api/twitter-api.js';
+import Factory from '../services/factory.js';
+import Utils from '../helpers/utils.js';
+import Pricing from '../services/pricing.js';
+import { TDROP_MAX_SUPPLY } from '../helpers/constants.js';
+import Twitter from '../services/twitter.js';
 
 (async () => {
-  await DB.useMongo(main).catch(console.error);
+  await main().catch(console.error);
   process.exit(0);
 })();
 
-async function main(db) {
-  const stakeDao = new StakeDao(db);
-
-  const tvl = await PriceApi.getTVL();
-  const nodes = await stakeDao.countNodeTypes();
+async function main() {
+  const tvl = await Pricing.getTVL();
+  const nodes = await Stake.countNodeTypes();
   const coins = await Factory.getCoins();
 
   const __dirname = path.resolve();
@@ -46,7 +44,7 @@ async function main(db) {
   ctx.drawImage(image, 0, 0, bgWidth, bgHeight);
 
   const logo = await loadImage(logoImage);
-  ctx.drawImage(logo, 130, 15, 45, 60);
+  ctx.drawImage(logo, 115, 15, 60, 60);
 
   let x1 = 20
   let y1 = 45;
@@ -89,11 +87,11 @@ async function main(db) {
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
-  text = 'Active wallets: ' + Utils.formatNumber(await ThetaApi.getActiveWallets());
+  text = 'Active wallets: ' + Utils.formatNumber(await Theta.getActiveWallets());
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
-  text = 'Trans 24H: ' + Utils.formatNumber(await ThetaApi.getTransactions24h());
+  text = 'Trans 24H: ' + Utils.formatNumber(await Theta.getTransactions24h());
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
@@ -119,8 +117,8 @@ async function main(db) {
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
-  const tdropTotalStaked = await ThetaApi.getTdropTotalStaked();
-  const tdropSupply = await ThetaApi.getTdropSupply();
+  const tdropTotalStaked = await Theta.getTdropTotalStaked();
+  const tdropSupply = await Theta.getTdropSupply();
   const tdropTotalStakedPercentage = Utils.formatNumber((tdropTotalStaked / tdropSupply) * 100, 2);
   text = 'Stakes: ' + Utils.formatNumber(tdropTotalStaked, 3, 'auto') + ' (' + tdropTotalStakedPercentage + '%)';
   ctx.fillText(text, x1 + 5, y1);
@@ -131,7 +129,7 @@ async function main(db) {
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
-  text = 'Staking APY: ' + parseFloat(await ThetaApi.getTdropStakingRate() * 100).toFixed(2) + '%'
+  text = 'Staking APY: ' + parseFloat(await Theta.getTdropStakingRate() * 100).toFixed(2) + '%'
   ctx.fillText(text, x1 + 5, y1);
 
   // THETA
@@ -160,7 +158,7 @@ async function main(db) {
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
-  const thetaTotalStaked = await ThetaApi.getThetaTotalAmountStaked();
+  const thetaTotalStaked = await Theta.getThetaTotalAmountStaked();
   const thetaTotalStakedPercentage = Utils.formatNumber((thetaTotalStaked / 1000000000) * 100, 2);
   text = 'Stakes: ' + Utils.formatNumber(thetaTotalStaked, 3, 'auto') + ' (' + thetaTotalStakedPercentage + '%)';
   ctx.fillText(text, x2 + 5, y2);
@@ -194,8 +192,8 @@ async function main(db) {
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
-  const tfuelTotalStaked = await ThetaApi.getTfuelTotalAmountStaked();
-  const tfuelTotalSupply = await ThetaApi.getTfuelSupply();
+  const tfuelTotalStaked = await Theta.getTfuelTotalAmountStaked();
+  const tfuelTotalSupply = await Theta.getTfuelSupply();
   const tfuelTotalStaledPercentage = Utils.formatNumber((tfuelTotalStaked / tfuelTotalSupply) * 100, 2);
   text = 'Stakes: ' + Utils.formatNumber(tfuelTotalStaked, 3, 'auto') + ' (' + tfuelTotalStaledPercentage + '%)';
   ctx.fillText(text, x2 + 5, y2);
@@ -205,14 +203,14 @@ async function main(db) {
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
-  const dailyBurnt = await ThetaApi.getTfuelDailyBurnt();
+  const dailyBurnt = await Theta.getTfuelDailyBurnt();
   text = 'Daily burnt: ' + Utils.formatNumber(dailyBurnt, 0);
   ctx.fillText(text, x2 + 5, y2);
 
   const buffer = await canvas.toBuffer('image/png');
   fs.writeFileSync(reportImage, buffer);
 
-  await TwitterApi.dailyUpdate('#THETA daily update ' + (today.getUTCFullYear() + '-' + (today.getUTCMonth() + 1) + '-' + today.getUTCDate()), reportImage);
+  await Twitter.dailyUpdate('#THETA daily update ' + (today.getUTCFullYear() + '-' + (today.getUTCMonth() + 1) + '-' + today.getUTCDate()), reportImage);
 
   fs.unlinkSync(reportImage);
 }

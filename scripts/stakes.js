@@ -1,26 +1,25 @@
-import ThetaApi from '../api/theta-api.js';
-import DB from '../db/db.js';
-import StakeDao from '../db/stake-dao.js';
+import '../boostrap.js';
+import Theta from '../services/theta.js';
+import Stake from '../models/stake.js';
 
 (async () => {
-  await DB.useMongo(main).catch(console.error);
+  await main().catch(console.error);
   process.exit(0);
 })();
 
-async function main(db) {
-  const stakeDao = new StakeDao(db);
+async function main() {
   const persistStakes = async (stakes) => {
     const range = 20;
     let i = 0;
     let n = stakes.length;
     while (i < n) {
       const items = stakes.slice(i, Math.min(n, i + range));
-      await stakeDao.saveMany(items);
+      await Stake.saveMany(items);
       i += range;
     }
   }
-  await stakeDao.deleteAll();
-  await persistStakes(await ThetaApi.getTfuelStakings());
-  await persistStakes(await ThetaApi.getThetaStakings());
+  await Stake.deleteAll();
+  await persistStakes(await Theta.getTfuelStakings());
+  await persistStakes(await Theta.getThetaStakings());
 }
   

@@ -3,18 +3,22 @@ FROM node:18-alpine AS base
 WORKDIR /app
 RUN apk add --no-cache libc6-compat
 RUN apk add --update --no-cache make g++ jpeg-dev cairo-dev giflib-dev pango-dev libtool autoconf automake
-COPY package.json package-*.json ./
+COPY package*.json ./
 
 # Start development
 FROM base AS development
+WORKDIR /app
+ENV NODE_ENV=development
 EXPOSE 3000
-RUN NODE_ENV=development npm install
+RUN npm install
 COPY . .
-CMD ["nodemon", "server.js"]
+CMD ["npm", "start"]
 
 # Start production
 FROM base AS production
+WORKDIR /app
+ENV NODE_ENV=production
 EXPOSE 3000
-RUN NODE_ENV=production npm install
+RUN npm install --production
 COPY . .
-CMD ["node", "server.js"]
+CMD ["npm", "start:prod"]

@@ -2,8 +2,6 @@ export const DECIMALS = 4;
 export const CACHE_LIFETIME_SHORT = 300; // 5 * 60 // 5 minutes
 export const CACHE_LIFETIME_MEDIUM = 600; // 10 * 60 // 10 minutes
 
-export const TRACKING_USD_MIN = 300000;
-
 export const THETA_EXPLORER_URL = 'https://explorer.thetatoken.org';
 export const THETA_EXPLORER_ENDPOINT = 'https://explorer.thetatoken.org:8443';
 export const THETA_WEI = '1000000000000000000';

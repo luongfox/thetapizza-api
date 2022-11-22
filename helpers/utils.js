@@ -44,11 +44,11 @@ export default class Utils {
     }
   }
 
-  static async doSimpleCache(key, value, expire, json = false) {
+  static async doSimpleCache(key, valueFx, expire, json = false) {
     let usingValue = await RC.get(key);
     if (!usingValue) {
-      usingValue = value;
-      await RC.set(key, json ? JSON.stringify(value) : value, expire);
+      usingValue = await valueFx();
+      await RC.set(key, json ? JSON.stringify(usingValue) : usingValue, expire);      
     } else if (json) {
       usingValue = JSON.parse(usingValue);
     }

@@ -1,6 +1,6 @@
 import '../boostrap.js';
 import Theta from '../services/theta.js';
-import { THETA_WEI, DECIMALS, TDROP_STAKING_ADDRESS, TRACKING_USD_MIN } from '../helpers/constants.js';
+import { THETA_WEI, DECIMALS, TDROP_STAKING_ADDRESS } from '../helpers/constants.js';
 import BigNumber from 'bignumber.js';
 import Account from '../models/account.js';
 import Transaction from '../models/transaction.js';
@@ -198,7 +198,11 @@ async function main() {
       continue;
     }
 
-    if (item.usd >= TRACKING_USD_MIN || ['stake_validator', 'withdraw_validator'].includes(item.type_name)) {
+    let canTweet = item.usd >= 300000;
+    canTweet = canTweet || (item.currency == 'tdrop' && item.usd >= 100000);
+    canTweet = canTweet || ['stake_validator', 'withdraw_validator'].includes(item.type_name);
+
+    if (canTweet) {
       if (item.type_name == 'transfer') {
         tweetTransaction(item, 'transferred');
       } else if (item.type_name == 'stake_tdrop') {

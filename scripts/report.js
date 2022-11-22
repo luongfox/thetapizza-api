@@ -23,11 +23,7 @@ async function main() {
   const __dirname = path.resolve();
   const reportImage = __dirname + '/public/images/report.png';
   const logoImage = __dirname + '/public/images/tfuel2.png';
-
-  let bgImage = __dirname + '/public/images/dailybg_green.png';
-  if (coins.THETA.price_change_24h <= 0 && coins.TFUEL.price_change_24h <= 0) {
-    bgImage = __dirname + '/public/images/dailybg_red.png';
-  }
+  const isBearish = coins.THETA.price_change_24h <= 0 && coins.TFUEL.price_change_24h <= 0;
   
   const bgWidth = 504;
   const bgHeight = 504;
@@ -39,6 +35,15 @@ async function main() {
 
   const canvas = createCanvas(bgWidth, bgHeight);
   const ctx = canvas.getContext('2d');
+
+  let bgImage = __dirname + '/public/images/dailybg_green.png';
+  let textColor = '#000000';
+  if (isBearish) {
+    bgImage = __dirname + '/public/images/dailybg_red.png';
+    textColor = '#ffffff';
+  }
+
+  ctx.fillStyle = textColor;
 
   const image = await loadImage(bgImage);
   ctx.drawImage(image, 0, 0, bgWidth, bgHeight);

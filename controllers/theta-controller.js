@@ -20,9 +20,9 @@ export default class ThetaController {
       const subTime =  Math.floor(new Date().getTime() / 1000) - parseInt(date) * 24 * 60 * 60;
       pines.push({ $match: { 'date': { $gte: String(subTime) } } });
     }
+    pines.push({ $lookup: { from: 'accounts', localField: 'from', foreignField: '_id', as: 'from_account' } });
+    pines.push({ $lookup: { from: 'accounts', localField: 'to', foreignField: '_id', as: 'to_account' } });
     if (account) {
-      pines.push({ $lookup: { from: 'accounts', localField: 'from', foreignField: '_id', as: 'from_account' } });
-      pines.push({ $lookup: { from: 'accounts', localField: 'to', foreignField: '_id', as: 'to_account' } });
       const itext = ".*" + account + ".*";
       pines.push({ $match: { $or: [ { 'from': { $regex: itext, $options: 'i' } }, { 'to': { $regex: itext, $options: 'i' } }, { 'from_account.name': { $regex: itext, $options: 'i' } }, { 'to_account.name': { $regex: itext, $options: 'i' } } , { 'from_account.tags': account }, { 'to_account.tags': account } ] } });
     }

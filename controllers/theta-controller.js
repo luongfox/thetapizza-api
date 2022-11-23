@@ -4,7 +4,6 @@ export default class ThetaController {
     
   static async searchTransactions(req, res) {
     const currency = req.query.currency;
-    const accountId = req.query.accountId;
     const account = req.query.account;
     const limit = req.query.limit ? parseInt(req.query.limit) : 100;
     const sort = req.query.sort ? req.query.sort : 'date';

@@ -3,8 +3,8 @@ import ThetaController from '../controllers/theta-controller.js';
 
 const router = express.Router();
 
-router.get('/market/prices', async (req, res) => {
-  ThetaController.prices(req, res);
+router.get('/transactions', async (req, res) => {
+  ThetaController.searchTransactions(req, res);
 });
 
 export default router;

@@ -22,7 +22,7 @@ async function main() {
 
   const __dirname = path.resolve();
   const reportImage = __dirname + '/public/images/report.png';
-  const logoImage = __dirname + '/public/images/tfuel2.png';
+  const logoImage = __dirname + '/public/images/tfuel3.png';
   const isBearish = coins.THETA.price_change_24h <= 0 && coins.TFUEL.price_change_24h <= 0;
   
   const bgWidth = 504;

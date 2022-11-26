@@ -2,19 +2,32 @@ import Pricing from '../services/pricing.js';
 import Utils from '../helpers/utils.js';
 import Theta from '../services/theta.js';
 import Stake from '../models/stake.js';
-import { CACHE_LIFETIME_MEDIUM, CACHE_LIFETIME_SHORT, TDROP_MAX_SUPPLY, THETA_SUPPLY } from '../helpers/constants.js';
+import RC from '../helpers/rc.js';
+import { TDROP_MAX_SUPPLY, THETA_SUPPLY } from '../helpers/constants.js';
 
 export default class Factory {
 
   static async getCoins() {
-    return await Utils.doSimpleCache('factory.coins', async () => await Pricing.getCoins(), CACHE_LIFETIME_MEDIUM, true);
+    let result = await RC.get('factory.coins');
+    if (result) {
+      result = JSON.parse(result);
+    } else {
+      result = await Pricing.getCoins();
+    }
+    return result;
   }
 
   static async getStats() {
-    return await Utils.doSimpleCache('factory.stats', async () => this.#getStatsData(), CACHE_LIFETIME_SHORT, true);
+    let result = await RC.get('factory.stats');
+    if (result) {
+      result = JSON.parse(result);
+    } else {
+      result = await this.getStatsData();
+    }
+    return result;
   }
 
-  static async #getStatsData() {
+  static async getStatsData() {
     const coins =  await this.getCoins();
     const tvl = await Pricing.getTVL();
     const nodes = await Stake.countNodeTypes();

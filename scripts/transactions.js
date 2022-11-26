@@ -20,8 +20,8 @@ async function main() {
   const data = [];
   for (const transaction of transactions) {
     if (transaction.type === 2) { // transfer
-      const theta = new BigNumber(transaction['data']['outputs'][0]['coins']['thetawei']).dividedBy(new BigNumber(THETA_WEI)).toString();
-      const tfuel = new BigNumber(transaction['data']['outputs'][0]['coins']['tfuelwei']).dividedBy(new BigNumber(THETA_WEI)).toString();
+      const theta = parseFloat(new BigNumber(transaction['data']['outputs'][0]['coins']['thetawei']).dividedBy(new BigNumber(THETA_WEI)).toString());
+      const tfuel = parseFloat(new BigNumber(transaction['data']['outputs'][0]['coins']['tfuelwei']).dividedBy(new BigNumber(THETA_WEI)).toString());
       if (theta > 0) {
         const usd = theta * coins['THETA']['price'];
         data.push({
@@ -33,7 +33,7 @@ async function main() {
           to: transaction['data']['outputs'][0]['address'],
           coins: theta,
           currency: 'theta',
-          usd: usd.toFixed(DECIMALS)
+          usd: parseFloat(usd.toFixed(DECIMALS))
         });
       } else {
         const usd = tfuel * coins['TFUEL']['price'];
@@ -46,13 +46,13 @@ async function main() {
           to: transaction['data']['outputs'][0]['address'],
           coins: tfuel,
           currency: 'tfuel',
-          usd: usd.toFixed(DECIMALS)
+          usd: parseFloat(usd.toFixed(DECIMALS))
         });
       }
 
     } else if (transaction.type === 10) { // stake as guardian / elite
-      const theta = new BigNumber(transaction['data']['source']['coins']['thetawei']).dividedBy(new BigNumber(THETA_WEI)).toString();
-      const tfuel = new BigNumber(transaction['data']['source']['coins']['tfuelwei']).dividedBy(new BigNumber(THETA_WEI)).toString();
+      const theta = parseFloat(new BigNumber(transaction['data']['source']['coins']['thetawei']).dividedBy(new BigNumber(THETA_WEI)).toString());
+      const tfuel = parseFloat(new BigNumber(transaction['data']['source']['coins']['tfuelwei']).dividedBy(new BigNumber(THETA_WEI)).toString());
       if (theta > 0) {
         const usd = theta * coins['THETA']['price'];
         data.push({
@@ -64,7 +64,7 @@ async function main() {
           to: transaction['data']['holder']['address'],
           coins: theta,
           currency: 'theta',
-          usd: usd.toFixed(DECIMALS)
+          usd: parseFloat(usd.toFixed(DECIMALS))
         });
       } else {
         const usd = tfuel * coins['TFUEL']['price'];
@@ -77,12 +77,12 @@ async function main() {
           to: transaction['data']['holder']['address'],
           coins: tfuel,
           currency: 'tfuel',
-          usd: usd.toFixed(DECIMALS)
+          usd: parseFloat(usd.toFixed(DECIMALS))
         });
       }
 
     } else if (transaction.type === 8) { // stake as validator
-      const theta = new BigNumber(transaction['data']['source']['coins']['thetawei']).dividedBy(new BigNumber(THETA_WEI)).toString();
+      const theta = parseFloat(new BigNumber(transaction['data']['source']['coins']['thetawei']).dividedBy(new BigNumber(THETA_WEI)).toString());
       const usd = theta * coins['THETA']['price'];
       data.push({
         _id: transaction['_id'],
@@ -93,7 +93,7 @@ async function main() {
         to: transaction['data']['holder']['address'],
         coins: theta,
         currency: 'theta',
-        usd: usd.toFixed(DECIMALS)
+        usd: parseFloat(usd.toFixed(DECIMALS))
       });
 
     } else if (transaction.type === 9) { // withdraw
@@ -102,7 +102,7 @@ async function main() {
         continue;
       }
       if (transaction['data']['purpose'] === 0) {
-        const theta = new BigNumber(stake.amount).dividedBy(new BigNumber(THETA_WEI)).toString();
+        const theta = parseFloat(new BigNumber(stake.amount).dividedBy(new BigNumber(THETA_WEI)).toString());
         const usd = theta * coins['THETA']['price'];
         data.push({
           _id: transaction['_id'],
@@ -113,10 +113,10 @@ async function main() {
           to: transaction['data']['source']['address'],
           coins: theta,
           currency: 'theta',
-          usd: usd.toFixed(DECIMALS)
+          usd: parseFloat(usd.toFixed(DECIMALS))
         });
       } else if (transaction['data']['purpose'] === 1) {
-        const theta = new BigNumber(stake.amount).dividedBy(new BigNumber(THETA_WEI)).toString();
+        const theta = parseFloat(new BigNumber(stake.amount).dividedBy(new BigNumber(THETA_WEI)).toString());
         const usd = theta * coins['THETA']['price'];
         data.push({
           _id: transaction['_id'],
@@ -127,10 +127,10 @@ async function main() {
           to: transaction['data']['source']['address'],
           coins: theta,
           currency: 'theta',
-          usd: usd.toFixed(DECIMALS)
+          usd: parseFloat(usd.toFixed(DECIMALS))
         });
       } else if (transaction['data']['purpose'] === 2) {
-        const tfuel = new BigNumber(stake.amount).dividedBy(new BigNumber(THETA_WEI)).toString();
+        const tfuel = parseFloat(new BigNumber(stake.amount).dividedBy(new BigNumber(THETA_WEI)).toString());
         const usd = tfuel * coins['TFUEL']['price'];
         data.push({
           _id: transaction['_id'],
@@ -141,7 +141,7 @@ async function main() {
           to: transaction['data']['source']['address'],
           coins: tfuel,
           currency: 'tfuel',
-          usd: usd.toFixed(DECIMALS)
+          usd: parseFloat(usd.toFixed(DECIMALS))
         });
       }
     }
@@ -158,7 +158,7 @@ async function main() {
       type = 102;
       transferType = 'withdraw_tdrop';
     }
-    const tdrop = new BigNumber(transfer['value']).dividedBy(new BigNumber(THETA_WEI)).toString();
+    const tdrop = parseFloat(new BigNumber(transfer['value']).dividedBy(new BigNumber(THETA_WEI)).toString());
     const usd = tdrop * coins['TDROP']['price'];
     data.push({
       _id: transfer['hash'],
@@ -169,7 +169,7 @@ async function main() {
       to: transfer['to'],
       coins: tdrop,
       currency: 'tdrop',
-      usd: usd.toFixed(DECIMALS)
+      usd: parseFloat(usd.toFixed(DECIMALS))
     });
   }
 

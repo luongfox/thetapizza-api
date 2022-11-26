@@ -18,6 +18,9 @@ export async function startCrontab() {
       console.log('Stats updated.');
     });
 
+    exec('node /app/scripts/transactions.js');
+    console.log('Transactions updated.');
+
     exec('node /app/scripts/stakes.js');
     console.log('Stakes updated.');
   });

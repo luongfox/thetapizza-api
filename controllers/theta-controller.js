@@ -1,9 +1,13 @@
+import Account from '../models/account.js';
 import MDB from '../models/mdb.js';
+import Stake from '../models/stake.js';
+import Factory from '../services/factory.js';
 
 export default class ThetaController {
     
   static async searchTransactions(req, res) {
     const currency = req.query.currency;
+    const type = req.query.type;
     const account = req.query.account;
     const limit = req.query.limit ? parseInt(req.query.limit) : 100;
     const sort = req.query.sort ? req.query.sort : 'date';
@@ -14,6 +18,9 @@ export default class ThetaController {
     const pines = [];
     if (currency) {
       pines.push({ $match: { 'currency':  currency  } });
+    }
+    if (type) {
+      pines.push({ $match: { 'type_name':  { $regex: (type + ".*"), $options: 'i' } } });
     }
     if (date) {
       const subTime =  Math.floor(new Date().getTime() / 1000) - parseInt(date) * 24 * 60 * 60;
@@ -36,6 +43,34 @@ export default class ThetaController {
     res.status(200).json({
       success: true,
       data: transactions
+    });
+  }
+
+  static async stats(req, res) {
+    res.status(200).json({
+      success: true,
+      data: await Factory.getStats()
+    });
+  }
+
+  static async accounts(req, res) {
+    res.status(200).json({
+      success: true,
+      data: await Account.getAll()
+    });
+  }
+
+  static async validators(req, res) {
+    res.status(200).json({
+      success: true,
+      data: await Stake.getValidators()
+    });
+  }
+
+  static async withdrawals(req, res) {
+    res.status(200).json({
+      success: true,
+      data: await Stake.getWithdrawals()
     });
   }
 }

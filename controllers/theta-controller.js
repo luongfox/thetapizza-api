@@ -30,7 +30,7 @@ export default class ThetaController {
     pines.push({ $lookup: { from: 'accounts', localField: 'to', foreignField: '_id', as: 'to_account' } });
     if (account) {
       const itext = ".*" + account + ".*";
-      pines.push({ $match: { $or: [ { 'from': { $regex: itext, $options: 'i' } }, { 'to': { $regex: itext, $options: 'i' } }, { 'from_account.name': { $regex: itext, $options: 'i' } }, { 'to_account.name': { $regex: itext, $options: 'i' } } , { 'from_account.tags': account }, { 'to_account.tags': account } ] } });
+      pines.push({ $match: { $or: [ { 'from': { $regex: itext, $options: 'i' } }, { 'to': { $regex: itext, $options: 'i' } }, { 'from_account.name': { $regex: itext, $options: 'i' } }, { 'to_account.name': { $regex: itext, $options: 'i' } } , { 'from_account.tags': { $regex: itext, $options: 'i' } }, { 'to_account.tags': { $regex: itext, $options: 'i' } } ] } });
     }
     if (sort == 'date') {
       pines.push({ $sort: { 'date': -1 } });

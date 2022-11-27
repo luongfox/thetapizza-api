@@ -37,7 +37,11 @@ export default class Stake {
       { $group: { _id: { type: '$type', holder: '$holder' }, amount: { $sum: '$amount' }, sources: { $push: { source: '$source', amount: '$amount' } } } },
       { $sort: { amount: -1 } }
     ]).toArray();
-    return result;
+    const validators = [];
+    for (const each of result) {
+      validators.push({ holder: each._id.holder, amount: each.amount, sources: each.sources  });
+    }
+    return validators;
   }
 
   static async getWithdrawals() {

@@ -28,6 +28,11 @@ export default class Factory {
   }
 
   static async getStatsData() {
+    let cachedStats = await RC.get('factory.stats');
+    if (cachedStats) {
+      cachedStats = JSON.parse(cachedStats);
+    }
+
     const coins =  await this.getCoins();
     const tvl = await Pricing.getTVL();
     const nodes = await Stake.countNodeTypes();
@@ -95,6 +100,17 @@ export default class Factory {
         supply_percent: tdropSupplyPercentage
       }
     };
+
+    if (cachedStats && !data.network.validators) {
+      data.network.validators = cachedStats.network.validators;
+    }
+    if (cachedStats && !data.network.guardians) {
+      data.network.guardians = cachedStats.network.guardians;
+    }
+    if (cachedStats && !data.network.elites) {
+      data.network.elites = cachedStats.network.elites;
+    }
+
     return data;
   }
 

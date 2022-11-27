@@ -16,14 +16,12 @@ import Twitter from '../services/twitter.js';
 })();
 
 async function main() {
-  const tvl = await Pricing.getTVL();
-  const nodes = await Stake.countNodeTypes();
-  const coins = await Factory.getCoins();
+  const stats = await Factory.getStats();
 
   const __dirname = path.resolve();
   const reportImage = __dirname + '/public/images/report.png';
   const logoImage = __dirname + '/public/images/tfuel3.png';
-  const isBearish = coins.THETA.price_change_24h <= 0 && coins.TFUEL.price_change_24h <= 0;
+  const isBearish = stats.theta.price_change_percent_24h <= 0 && stats.tfuel.price_change_percent_24h <= 0;
   
   const bgWidth = 504;
   const bgHeight = 504;
@@ -75,28 +73,28 @@ async function main() {
   ctx.fillText(text, x1 + 5, y1);
 
   y1 = 135;
-  text = 'TVL: $' + Utils.formatNumber(tvl.tvl, 2, 'auto');
+  text = 'TVL: $' + Utils.formatNumber(stats.network.tvl, 2, 'auto') + ' (' + (stats.network.tvl_change_24h >= 0 ? '+' : '-') + Utils.formatNumber(Math.abs(stats.network.tvl_change_24h), 2, 'auto') + ')';;
   ctx.font = normalFont;
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
-  text = 'Validators: ' + nodes.vcp;
+  text = 'Validators: ' + stats.network.validators;
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
-  text = 'Guardians: ' + Utils.formatNumber(nodes.gcp);
+  text = 'Guardians: ' + Utils.formatNumber(stats.network.guardians);
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
-  text = 'Elite nodes: ' + Utils.formatNumber(nodes.eenp);
+  text = 'Elite nodes: ' + Utils.formatNumber(stats.network.elites);
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
-  text = 'Active wallets: ' + Utils.formatNumber(await Theta.getActiveWallets());
+  text = 'Active wallets: ' + Utils.formatNumber(stats.network.active_wallets);
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
-  text = 'Trans 24H: ' + Utils.formatNumber(await Theta.getTransactions24h());
+  text = 'Trans 24H: ' + Utils.formatNumber(stats.network.transactions_24h);
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
@@ -105,36 +103,32 @@ async function main() {
   ctx.fillText(text, x1 + 5, y1 + 5);
   
   y1 += hSpacing + 5;
-  text = 'Rank: #' + Utils.formatNumber(coins.TDROP.rank, 0);
+  text = 'Rank: #' + Utils.formatNumber(stats.tdrop.rank, 0);
   ctx.font = normalFont;
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
-  text = 'Price: $' + Utils.formatNumber(coins.TDROP.price, 5) + ' (' + (coins.TDROP.price_change_24h >= 0 ? '+' : '') + Utils.formatNumber(coins.TDROP.price_change_24h, 2) + '%)';
+  text = 'Price: $' + Utils.formatNumber(stats.tdrop.price, 5) + ' (' + (stats.tdrop.price_change_percent_24h >= 0 ? '+' : '-') + Utils.formatNumber(Math.abs(stats.tdrop.price_change_percent_24h), 2) + '%)';
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
-  text = 'Vol 24H: $' + Utils.formatNumber(coins.TDROP.volume_24h, 2, 'auto') + ' (' + (coins.TDROP.volume_change_24h >= 0 ? '+' : '') + Utils.formatNumber(coins.TDROP.volume_change_24h, 0) + '%)';
+  text = 'Vol 24H: $' + Utils.formatNumber(stats.tdrop.volume_24h, 2, 'auto') + ' (' + (stats.tdrop.volume_change_percent_24h >= 0 ? '+' : '-') + Utils.formatNumber(Math.abs(stats.tdrop.volume_change_percent_24h), 2) + '%)';
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
-  text = 'Market cap: $' + Utils.formatNumber(coins.TDROP.market_cap, 2, 'auto');
+  text = 'Market cap: $' + Utils.formatNumber(stats.tdrop.market_cap, 2, 'auto');
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
-  const tdropTotalStaked = await Theta.getTdropTotalStaked();
-  const tdropSupply = await Theta.getTdropSupply();
-  const tdropTotalStakedPercentage = Utils.formatNumber((tdropTotalStaked / tdropSupply) * 100, 2);
-  text = 'Stakes: ' + Utils.formatNumber(tdropTotalStaked, 3, 'auto') + ' (' + tdropTotalStakedPercentage + '%)';
+  text = 'Stakes: ' + Utils.formatNumber(stats.tdrop.stakes, 2, 'auto') + ' (' + Utils.formatNumber(stats.tdrop.stakes_percent, 2) + '%)';
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
-  const tdropSupplyPercentage = Utils.formatNumber((tdropSupply / TDROP_MAX_SUPPLY) * 100, 2);
-  text = 'Supply: ' + Utils.formatNumber(tdropSupply, 2, 'auto') + ' (' + tdropSupplyPercentage + '%)';
+  text = 'Supply: ' + Utils.formatNumber(stats.tdrop.supply, 3, 'auto') + ' / 20B';
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
-  text = 'Staking APY: ' + parseFloat(await Theta.getTdropStakingRate() * 100).toFixed(2) + '%'
+  text = 'Staking APY: ' + Utils.formatNumber(stats.tdrop.stakes_apy_percent, 2) + '%';
   ctx.fillText(text, x1 + 5, y1);
 
   // THETA
@@ -146,30 +140,28 @@ async function main() {
   ctx.fillText(text, x2 + 5, y2 + 5);
   
   y2 += hSpacing + 5;
-  text = 'Rank: #' + Utils.formatNumber(coins.THETA.rank, 0);
+  text = 'Rank: #' + Utils.formatNumber(stats.theta.rank, 0);
   ctx.font = normalFont;
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
-  text = 'Price: $' + Utils.formatNumber(coins.THETA.price, 3) + ' (' + (coins.THETA.price_change_24h >= 0 ? '+' : '') + Utils.formatNumber(coins.THETA.price_change_24h, 2) + '%)';
+  text = 'Price: $' + Utils.formatNumber(stats.theta.price, 3) + ' (' + (stats.theta.price_change_percent_24h >= 0 ? '+' : '-') + Utils.formatNumber(Math.abs(stats.theta.price_change_percent_24h), 2) + '%)';
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
-  text = 'Vol 24H: $' + Utils.formatNumber(coins.THETA.volume_24h, 2, 'auto') + ' (' + (coins.THETA.volume_change_24h >= 0 ? '+' : '') + Utils.formatNumber(coins.THETA.volume_change_24h, 0) + '%)';
+  text = 'Vol 24H: $' + Utils.formatNumber(stats.theta.volume_24h, 2, 'auto') + ' (' + (stats.theta.volume_change_percent_24h >= 0 ? '+' : '') + Utils.formatNumber(stats.theta.volume_change_percent_24h, 2) + '%)';
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
-  text = 'Market cap: $' + Utils.formatNumber(coins.THETA.market_cap, 2, 'auto');
+  text = 'Market cap: $' + Utils.formatNumber(stats.theta.market_cap, 2, 'auto');
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
-  const thetaTotalStaked = await Theta.getThetaTotalAmountStaked();
-  const thetaTotalStakedPercentage = Utils.formatNumber((thetaTotalStaked / 1000000000) * 100, 2);
-  text = 'Stakes: ' + Utils.formatNumber(thetaTotalStaked, 3, 'auto') + ' (' + thetaTotalStakedPercentage + '%)';
+  text = 'Stakes: ' + Utils.formatNumber(stats.theta.stakes, 2, 'auto') + ' (' + Utils.formatNumber(stats.theta.stakes_percent, 2) + '%)';
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
-  text = 'Supply: 1,000,000,000';
+  text = 'Supply: 1B / 1B';
   ctx.fillText(text, x2 + 5, y2);
 
   // TFUEL
@@ -180,36 +172,32 @@ async function main() {
   ctx.fillText(text, x2 + 5, y2 + 5);
   
   y2 += hSpacing + 5;
-  text = 'Rank: #' + Utils.formatNumber(coins.TFUEL.rank, 0);
+  text = 'Rank: #' + Utils.formatNumber(stats.tfuel.rank, 0);
   ctx.font = normalFont;
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
-  text = 'Price: $' + Utils.formatNumber(coins.TFUEL.price, 4) + ' (' + (coins.TFUEL.price_change_24h >= 0 ? '+' : '') + Utils.formatNumber(coins.TFUEL.price_change_24h, 2) + '%)';
+  text = 'Price: $' + Utils.formatNumber(stats.tfuel.price, 4) + ' (' + (stats.tfuel.price_change_percent_24h >= 0 ? '+' : '-') + Utils.formatNumber(Math.abs(stats.tfuel.price_change_percent_24h), 2) + '%)';
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
-  text = 'Vol 24H: $' + Utils.formatNumber(coins.TFUEL.volume_24h, 2, 'auto') + ' (' + (coins.TFUEL.volume_change_24h >= 0 ? '+' : '') + Utils.formatNumber(coins.TFUEL.volume_change_24h, 0) + '%)';
+  text = 'Vol 24H: $' + Utils.formatNumber(stats.tfuel.volume_24h, 2, 'auto') + ' (' + (stats.tfuel.volume_change_percent_24h >= 0 ? '+' : '-') + Utils.formatNumber(Math.abs(stats.tfuel.volume_change_percent_24h), 2) + '%)';
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
-  text = 'Market cap: $' + Utils.formatNumber(coins.TFUEL.market_cap, 2, 'auto');
+  text = 'Market cap: $' + Utils.formatNumber(stats.tfuel.market_cap, 2, 'auto');
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
-  const tfuelTotalStaked = await Theta.getTfuelTotalAmountStaked();
-  const tfuelTotalSupply = await Theta.getTfuelSupply();
-  const tfuelTotalStaledPercentage = Utils.formatNumber((tfuelTotalStaked / tfuelTotalSupply) * 100, 2);
-  text = 'Stakes: ' + Utils.formatNumber(tfuelTotalStaked, 3, 'auto') + ' (' + tfuelTotalStaledPercentage + '%)';
+  text = 'Stakes: ' + Utils.formatNumber(stats.tfuel.stakes, 2, 'auto') + ' (' + Utils.formatNumber(stats.tfuel.stakes_percent, 2) + '%)';
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
-  text = 'Supply: ' + Utils.formatNumber(tfuelTotalSupply, 0);
+  text = 'Supply: ' + Utils.formatNumber(stats.tfuel.supply, 3, 'auto') + ' / Infinite';
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
-  const dailyBurnt = await Theta.getTfuelDailyBurnt();
-  text = 'Daily burnt: ' + Utils.formatNumber(dailyBurnt, 0);
+  text = 'Daily burnt: ' + Utils.formatNumber(stats.tfuel.daily_burnt, 0);
   ctx.fillText(text, x2 + 5, y2);
 
   const buffer = await canvas.toBuffer('image/png');

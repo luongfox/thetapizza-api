@@ -5,6 +5,11 @@ import Pricing from '../services/pricing.js';
 import Factory from '../services/factory.js';
 
 export async function startCrontab() {
+  cron.schedule('*/10 * * * *', () => {
+    exec('node /app/scripts/stakes.js');
+    console.log('Stakes updated.');
+  });
+
   cron.schedule('*/7 * * * *', () => {
     Pricing.getCoins().then((coins) => {
       RC.set('factory.coins', JSON.stringify(coins));
@@ -20,12 +25,9 @@ export async function startCrontab() {
 
     exec('node /app/scripts/transactions.js');
     console.log('Transactions updated.');
-
-    exec('node /app/scripts/stakes.js');
-    console.log('Stakes updated.');
   });
   
-  cron.schedule('58 23 * * *', () => {
+  cron.schedule('59 23 * * *', () => {
     exec('node /app/scripts/report.js');
     console.log('Report tweeted.');
   });

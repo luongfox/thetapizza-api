@@ -26,7 +26,7 @@ export default class Factory {
     if (result) {
       result = JSON.parse(result);
     } else {
-      result = await Theta.getTopWallets('theta');
+      result = await Theta.getTopThetaWallets();
     }
     return result;
   }
@@ -43,7 +43,7 @@ export default class Factory {
     if (result) {
       result = JSON.parse(result);
     } else {
-      result = await Theta.getTopWallets('tfuel');
+      result = await Theta.getTopTfuelWallets();
     }
     return result;
   }

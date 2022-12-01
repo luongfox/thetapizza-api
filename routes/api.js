@@ -23,4 +23,8 @@ router.get('/stake/withdrawals', async (req, res) => {
   ThetaController.withdrawals(req, res);
 });
 
+router.get('/top-wallets', async (req, res) => {
+  ThetaController.topWallets(req, res);
+});
+
 export default router;

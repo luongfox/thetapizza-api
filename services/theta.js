@@ -144,4 +144,16 @@ export default class Theta {
     });
   }
 
+  static async getTopWallets(currency) {
+    return Utils.doSimpleRequest(THETA_EXPLORER_ENDPOINT + '/api/account/top/' + currency + '/100', (data) => {
+      const result = data.body;
+      const wallets = [];
+      for (const each of result) {
+        const balance = parseFloat(new BigNumber(each.balance.thetawei).dividedBy(new BigNumber(THETA_WEI)).toString()).toFixed(2);
+        wallets.push({ address: each.address, balance: balance });
+      }
+      return wallets;
+    });
+  }
+
 }

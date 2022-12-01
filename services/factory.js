@@ -7,6 +7,26 @@ import { TDROP_MAX_SUPPLY, THETA_SUPPLY } from '../helpers/constants.js';
 
 export default class Factory {
 
+  static async getTopThetaWallets() {
+    let result = await RC.get('factory.top_theta_wallets');
+    if (result) {
+      result = JSON.parse(result);
+    } else {
+      result = await Theta.getTopWallets('theta');
+    }
+    return result;
+  }
+
+  static async getTopTfuelWallets() {
+    let result = await RC.get('factory.top_tfuel_wallets');
+    if (result) {
+      result = JSON.parse(result);
+    } else {
+      result = await Theta.getTopWallets('tfuel');
+    }
+    return result;
+  }
+
   static async getCoins() {
     let result = await RC.get('factory.coins');
     if (result) {

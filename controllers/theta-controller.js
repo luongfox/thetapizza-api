@@ -2,6 +2,7 @@ import Account from '../models/account.js';
 import MDB from '../models/mdb.js';
 import Stake from '../models/stake.js';
 import Factory from '../services/factory.js';
+import Theta from '../services/theta.js';
 
 export default class ThetaController {
     
@@ -71,6 +72,20 @@ export default class ThetaController {
     res.status(200).json({
       success: true,
       data: await Stake.getWithdrawals()
+    });
+  }
+
+  static async topWallets(req, res) {
+    const currency = req.query.currency;
+    let topWallets = [];
+    if (currency == 'theta') {
+      topWallets = await Factory.getTopThetaWallets()
+    } else if (currency == 'tfuel') {
+      topWallets = await Factory.getTopTfuelWallets()
+    }
+    res.status(200).json({
+      success: true,
+      data: topWallets
     });
   }
 }

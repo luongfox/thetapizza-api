@@ -1,21 +1,11 @@
 import cron from 'node-cron';
 import { exec } from 'child_process';
-import RC from '../helpers/rc.js';
-import Pricing from '../services/pricing.js';
-import Theta from '../services/theta.js';
 import Factory from '../services/factory.js';
 
 export async function startCrontab() {
   cron.schedule('*/30 * * * *', () => {
-    Theta.getTopWallets('theta').then((wallets) => {
-      RC.set('factory.top_theta_wallets', JSON.stringify(wallets));
-      console.log('Top theta wallets updated.');
-    });
-
-    Theta.getTopWallets('tfuel').then((wallets) => {
-      RC.set('factory.top_tfuel_wallets', JSON.stringify(wallets));
-      console.log('Top tfuel wallets updated.');
-    });
+    Factory.cacheTopThetaWallets();
+    Factory.cacheTopTfuelWallets();
   });
 
   cron.schedule('*/10 * * * *', () => {
@@ -24,17 +14,11 @@ export async function startCrontab() {
   });
 
   cron.schedule('*/7 * * * *', () => {
-    Pricing.getCoins().then((coins) => {
-      RC.set('factory.coins', JSON.stringify(coins));
-      console.log('Coins updated.');
-    });
+    Factory.cacheCoins();
   });
 
   cron.schedule('*/2 * * * *', () => {
-    Factory.getStatsData().then((stats) => {
-      RC.set('factory.stats', JSON.stringify(stats));
-      console.log('Stats updated.');
-    });
+    Factory.cacheStats();
 
     exec('node /app/scripts/transactions.js');
     console.log('Transactions updated.');

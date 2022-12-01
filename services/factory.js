@@ -7,6 +7,20 @@ import { TDROP_MAX_SUPPLY, THETA_SUPPLY } from '../helpers/constants.js';
 
 export default class Factory {
 
+  static async recache() {
+    this.cacheTopThetaWallets();
+    this.cacheTopTfuelWallets();
+    this.cacheCoins();
+    this.cacheStats();
+  }
+
+  static async cacheTopThetaWallets() {
+    Theta.getTopWallets('theta').then((wallets) => {
+      RC.set('factory.top_theta_wallets', JSON.stringify(wallets));
+      console.log('Top theta wallets updated.');
+    });
+  }
+
   static async getTopThetaWallets() {
     let result = await RC.get('factory.top_theta_wallets');
     if (result) {
@@ -15,6 +29,13 @@ export default class Factory {
       result = await Theta.getTopWallets('theta');
     }
     return result;
+  }
+
+  static async cacheTopTfuelWallets() {
+    Theta.getTopWallets('tfuel').then((wallets) => {
+      RC.set('factory.top_tfuel_wallets', JSON.stringify(wallets));
+      console.log('Top tfuel wallets updated.');
+    });
   }
 
   static async getTopTfuelWallets() {
@@ -27,6 +48,13 @@ export default class Factory {
     return result;
   }
 
+  static async cacheCoins() {
+    Pricing.getCoins().then((coins) => {
+      RC.set('factory.coins', JSON.stringify(coins));
+      console.log('Coins updated.');
+    });
+  }
+
   static async getCoins() {
     let result = await RC.get('factory.coins');
     if (result) {
@@ -35,6 +63,13 @@ export default class Factory {
       result = await Pricing.getCoins();
     }
     return result;
+  }
+
+  static async cacheStats() {
+    this.getStatsData().then((stats) => {
+      RC.set('factory.stats', JSON.stringify(stats));
+      console.log('Stats updated.');
+    });
   }
 
   static async getStats() {

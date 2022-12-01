@@ -15,7 +15,7 @@ export default class Factory {
   }
 
   static async cacheTopThetaWallets() {
-    Theta.getTopWallets('theta').then((wallets) => {
+    Theta.getTopThetaWallets().then((wallets) => {
       RC.set('factory.top_theta_wallets', JSON.stringify(wallets));
       console.log('Top theta wallets updated.');
     });
@@ -32,7 +32,7 @@ export default class Factory {
   }
 
   static async cacheTopTfuelWallets() {
-    Theta.getTopWallets('tfuel').then((wallets) => {
+    Theta.getTopTfuelWallets().then((wallets) => {
       RC.set('factory.top_tfuel_wallets', JSON.stringify(wallets));
       console.log('Top tfuel wallets updated.');
     });

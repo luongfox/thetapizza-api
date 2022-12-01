@@ -8,14 +8,14 @@ import { TDROP_MAX_SUPPLY, THETA_SUPPLY } from '../helpers/constants.js';
 export default class Factory {
 
   static async recache() {
-    this.cacheTopThetaWallets();
-    this.cacheTopTfuelWallets();
-    this.cacheCoins();
-    this.cacheStats();
+    await this.cacheTopThetaWallets();
+    await this.cacheTopTfuelWallets();
+    await this.cacheCoins();
+    await this.cacheStats();
   }
 
   static async cacheTopThetaWallets() {
-    Theta.getTopThetaWallets().then((wallets) => {
+    await Theta.getTopThetaWallets().then((wallets) => {
       RC.set('factory.top_theta_wallets', JSON.stringify(wallets));
       console.log('Top theta wallets updated.');
     });
@@ -32,7 +32,7 @@ export default class Factory {
   }
 
   static async cacheTopTfuelWallets() {
-    Theta.getTopTfuelWallets().then((wallets) => {
+    await Theta.getTopTfuelWallets().then((wallets) => {
       RC.set('factory.top_tfuel_wallets', JSON.stringify(wallets));
       console.log('Top tfuel wallets updated.');
     });
@@ -66,7 +66,7 @@ export default class Factory {
   }
 
   static async cacheStats() {
-    this.getStatsData().then((stats) => {
+    await this.getStatsData().then((stats) => {
       RC.set('factory.stats', JSON.stringify(stats));
       console.log('Stats updated.');
     });

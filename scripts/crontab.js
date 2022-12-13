@@ -24,8 +24,10 @@ export async function startCrontab() {
     console.log('Transactions updated.');
   });
   
-  cron.schedule('59 23 * * *', () => {
-    exec('node /app/scripts/report.js');
-    console.log('Report tweeted.');
-  });
+  if (process.env.APP_ENV == 'production') {
+    cron.schedule('59 23 * * *', () => {
+      exec('node /app/scripts/report.js');
+      console.log('Report tweeted.');
+    });
+  }
 }

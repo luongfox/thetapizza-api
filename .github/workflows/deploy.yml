@@ -17,5 +17,6 @@ jobs:
           username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           script: |
+            cd /var/www/thetapizza-api/
             /var/www/thetapizza-api/deploy.sh
 

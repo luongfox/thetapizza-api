@@ -203,7 +203,7 @@ async function main() {
   const buffer = await canvas.toBuffer('image/png');
   fs.writeFileSync(reportImage, buffer);
 
-  await Twitter.dailyUpdate('#THETA daily update ' + (today.getUTCFullYear() + '-' + (today.getUTCMonth() + 1) + '-' + today.getUTCDate()), reportImage);
+  await Twitter.dailyUpdate('#THETA daily update ' + (today.getUTCFullYear() + '-' + (today.getUTCMonth() + 1) + '-' + today.getUTCDate()) + ' https://thetapizza.com', reportImage);
 
   fs.unlinkSync(reportImage);
 }

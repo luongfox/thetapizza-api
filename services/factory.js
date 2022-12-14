@@ -93,6 +93,8 @@ export default class Factory {
     const nodes = await Stake.countNodeTypes();
     const activeWallets = await Theta.getActiveWallets();
     const transactions24h = await Theta.getTransactions24h();
+    const blocks24h = await Theta.getBlocks24h();
+    const blockHeight = await Theta.getBlockHeight();
 
     const tdropTotalStaked = await Theta.getTdropTotalStaked();
     const tdropSupply = await Theta.getTdropSupply();
@@ -116,7 +118,9 @@ export default class Factory {
         guardians: nodes.gcp,
         elites: nodes.eenp,
         active_wallets: activeWallets,
-        transactions_24h: transactions24h
+        transactions_24h: transactions24h,
+        blocks_24h: blocks24h,
+        block_height: blockHeight
       },
       theta: {
         rank: coins.THETA.rank,

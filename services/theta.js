@@ -82,6 +82,12 @@ export default class Theta {
     });
   }
 
+  static async getBlockHeight() {
+    return Utils.doSimpleRequest(THETA_EXPLORER_ENDPOINT + '/api/transactions/range?limit=1', (data) => {
+      return data['body'][0]['block_height'];
+    });
+  }
+
   static async getTransactions24h() {
     return Utils.doSimpleRequest(THETA_EXPLORER_ENDPOINT + '/api/transactions/number/24', (data) => {
       return data['body']['total_num_tx'];

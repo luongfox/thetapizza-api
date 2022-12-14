@@ -12,6 +12,7 @@ export default class Factory {
     await this.cacheTopTfuelWallets();
     await this.cacheCoins();
     await this.cacheStats();
+    await this.cacheStats();
   }
 
   static async cacheTopThetaWallets() {

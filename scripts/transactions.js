@@ -50,10 +50,23 @@ async function main() {
         });
       }
 
-    } else if (transaction.type === 10) { // stake as guardian / elite
-      const theta = parseFloat(new BigNumber(transaction['data']['source']['coins']['thetawei']).dividedBy(new BigNumber(THETA_WEI)).toString());
-      const tfuel = parseFloat(new BigNumber(transaction['data']['source']['coins']['tfuelwei']).dividedBy(new BigNumber(THETA_WEI)).toString());
-      if (theta > 0) {
+    } else if (transaction.type === 8 || transaction.type === 10) { // stake as validator / guardian / elite
+      if (transaction['data']['purpose'] === 0) {
+        const theta = parseFloat(new BigNumber(transaction['data']['source']['coins']['thetawei']).dividedBy(new BigNumber(THETA_WEI)).toString());
+        const usd = theta * coins['THETA']['price'];
+        data.push({
+          _id: transaction['_id'],
+          type: transaction['type'],
+          type_name: 'stake_validator',
+          date: transaction['timestamp'],
+          from: transaction['data']['source']['address'],
+          to: transaction['data']['holder']['address'],
+          coins: theta,
+          currency: 'theta',
+          usd: parseFloat(usd.toFixed(DECIMALS))
+        });
+      } else if (transaction['data']['purpose'] === 1) {
+        const theta = parseFloat(new BigNumber(transaction['data']['source']['coins']['thetawei']).dividedBy(new BigNumber(THETA_WEI)).toString());
         const usd = theta * coins['THETA']['price'];
         data.push({
           _id: transaction['_id'],
@@ -66,7 +79,8 @@ async function main() {
           currency: 'theta',
           usd: parseFloat(usd.toFixed(DECIMALS))
         });
-      } else {
+      } else if (transaction['data']['purpose'] === 2) {
+        const tfuel = parseFloat(new BigNumber(transaction['data']['source']['coins']['tfuelwei']).dividedBy(new BigNumber(THETA_WEI)).toString());
         const usd = tfuel * coins['TFUEL']['price'];
         data.push({
           _id: transaction['_id'],
@@ -80,21 +94,6 @@ async function main() {
           usd: parseFloat(usd.toFixed(DECIMALS))
         });
       }
-
-    } else if (transaction.type === 8) { // stake as validator
-      const theta = parseFloat(new BigNumber(transaction['data']['source']['coins']['thetawei']).dividedBy(new BigNumber(THETA_WEI)).toString());
-      const usd = theta * coins['THETA']['price'];
-      data.push({
-        _id: transaction['_id'],
-        type: transaction['type'],
-        type_name: 'stake_validator',
-        date: transaction['timestamp'],
-        from: transaction['data']['source']['address'],
-        to: transaction['data']['holder']['address'],
-        coins: theta,
-        currency: 'theta',
-        usd: parseFloat(usd.toFixed(DECIMALS))
-      });
 
     } else if (transaction.type === 9) { // withdraw
       const stake = await Theta.getStakeBySourceAndHolder(transaction['data']['source']['address'], transaction['data']['holder']['address']);

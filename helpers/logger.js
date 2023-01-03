@@ -7,6 +7,7 @@ export default class Logger {
   static setup() {
     this.#client = winston.createLogger({
       level: 'debug',
+      exitOnError: false,
       format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
       transports: [
         new winston.transports.File({ filename: 'storage/logs/debug.log' }),

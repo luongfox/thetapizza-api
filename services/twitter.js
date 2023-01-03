@@ -4,7 +4,11 @@ export default class Twitter {
 
   static async tweet(text) {
     const client = this.#getAppClient();
-    return await client.v2.tweet('[Bot] ' + text);
+    if (process.env.APP_ENV == 'production') {
+      return await client.v2.tweet('[Bot] ' + text);
+    } else {
+      return false;
+    }
   }
 
   static async dailyUpdate(text, imagePath) {
@@ -13,7 +17,11 @@ export default class Twitter {
     const params = {
       media: { media_ids: [ imageId ] }
     };
-    return await client.v2.tweet('[Bot] ' + text, params);
+    if (process.env.APP_ENV == 'production') {
+      return await client.v2.tweet('[Bot] ' + text, params);
+    } else {
+      return false;
+    }
   }
 
   static #getAppClient() {

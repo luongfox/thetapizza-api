@@ -14,3 +14,4 @@ ehthumbs.db
 Thumbs.db
 docker-compose.yml
 public/.DS_Store
+storage/logs/*.log

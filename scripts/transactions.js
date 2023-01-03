@@ -7,10 +7,13 @@ import Transaction from '../models/transaction.js';
 import Factory from '../services/factory.js';
 import Utils from '../helpers/utils.js';
 import Twitter from '../services/twitter.js';
+import Logger from '../helpers/logger.js';
 
 (async () => {
   await main().catch(console.error);
-  process.exit(0);
+  setTimeout(() => {
+    process.exit(0);
+  }, 5000);
 })();
 
 async function main() {
@@ -143,7 +146,11 @@ async function main() {
           usd: parseFloat(usd.toFixed(DECIMALS))
         });
       }
+
+    } else if (transaction.type === 5 || transaction.type === 11 || transaction.type === 201) {
+      Logger.debug(transaction);
     }
+
   }
 
   const tdropTransfers = await Theta.getLatestTdropTransfers();

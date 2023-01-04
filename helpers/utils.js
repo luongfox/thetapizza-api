@@ -9,7 +9,7 @@ export default class Utils {
   }
 
   static formatNumber(number, precision = 0, unit = '') {
-    let unit2 = '';
+    let unit2 = unit;
     if (unit == 'auto') {
       if (number >= 1000000000) {
         unit2 = 'B';

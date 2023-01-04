@@ -193,7 +193,7 @@ async function main() {
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
-  text = 'Supply: ' + Utils.formatNumber(stats.tfuel.supply, 3, 'auto') + ' / Infinite';
+  text = 'Supply: ' + Utils.formatNumber(stats.tfuel.supply, 2, 'M') + ' / Infinite';
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;

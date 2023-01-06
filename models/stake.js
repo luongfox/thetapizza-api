@@ -33,7 +33,7 @@ export default class Stake {
   static async getValidators() {
     const collection = await MDB.use(this.#collection);
     const result = await collection.aggregate([
-      { $match: { type: 'vcp' } },
+      { $match: { type: 'vcp', withdrawn: false } },
       { $group: { _id: { type: '$type', holder: '$holder' }, amount: { $sum: '$amount' }, sources: { $push: { source: '$source', amount: '$amount' } } } },
       { $sort: { amount: -1 } }
     ]).toArray();

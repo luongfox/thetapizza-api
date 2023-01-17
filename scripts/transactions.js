@@ -147,7 +147,7 @@ async function main() {
         });
       }
 
-    } else if (transaction.type === 5 || transaction.type === 11 || transaction.type === 201) {
+    } else if (transaction.type === 5 || transaction.type === 201) {
       Logger.debug(transaction);
     }
 

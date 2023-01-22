@@ -112,7 +112,7 @@ async function main() {
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
-  text = 'Vol 24H: $' + Utils.formatNumber(stats.tdrop.volume_24h, 2, 'auto') + ' (' + (stats.tdrop.volume_change_percent_24h >= 0 ? '+' : '-') + Utils.formatNumber(Math.abs(stats.tdrop.volume_change_percent_24h), 2) + '%)';
+  text = 'Vol 24H: $' + Utils.formatNumber(stats.tdrop.volume_24h, 1, 'auto') + ' (' + (stats.tdrop.volume_change_percent_24h >= 0 ? '+' : '-') + Utils.formatNumber(Math.abs(stats.tdrop.volume_change_percent_24h), 1) + '%)';
   ctx.fillText(text, x1 + 5, y1);
 
   y1 += hSpacing;
@@ -149,7 +149,7 @@ async function main() {
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
-  text = 'Vol 24H: $' + Utils.formatNumber(stats.theta.volume_24h, 2, 'auto') + ' (' + (stats.theta.volume_change_percent_24h >= 0 ? '+' : '') + Utils.formatNumber(stats.theta.volume_change_percent_24h, 2) + '%)';
+  text = 'Vol 24H: $' + Utils.formatNumber(stats.theta.volume_24h, 1, 'auto') + ' (' + (stats.theta.volume_change_percent_24h >= 0 ? '+' : '') + Utils.formatNumber(stats.theta.volume_change_percent_24h, 1) + '%)';
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
@@ -181,7 +181,7 @@ async function main() {
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;
-  text = 'Vol 24H: $' + Utils.formatNumber(stats.tfuel.volume_24h, 2, 'auto') + ' (' + (stats.tfuel.volume_change_percent_24h >= 0 ? '+' : '-') + Utils.formatNumber(Math.abs(stats.tfuel.volume_change_percent_24h), 2) + '%)';
+  text = 'Vol 24H: $' + Utils.formatNumber(stats.tfuel.volume_24h, 1, 'auto') + ' (' + (stats.tfuel.volume_change_percent_24h >= 0 ? '+' : '-') + Utils.formatNumber(Math.abs(stats.tfuel.volume_change_percent_24h), 1) + '%)';
   ctx.fillText(text, x2 + 5, y2);
 
   y2 += hSpacing;

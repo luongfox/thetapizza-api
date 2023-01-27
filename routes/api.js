@@ -27,4 +27,8 @@ router.get('/top-wallets', async (req, res) => {
   ThetaController.topWallets(req, res);
 });
 
+router.get('/trace', async (req, res) => {
+  ThetaController.trace(req, res);
+});
+
 export default router;

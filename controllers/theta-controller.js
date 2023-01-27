@@ -88,4 +88,36 @@ export default class ThetaController {
       data: topWallets
     });
   }
+
+  static async trace(req, res) {
+    const currency = req.query.currency;
+    const type = req.query.type;
+    const flow = req.query.flow ?? 'next';
+    const account = req.query.account;
+    const minUsd = req.query.min_usd ? parseInt(req.query.min_usd) : 50000;
+
+    const transactionCollection = await MDB.use('transactions');
+
+    const pines = [];
+    pines.push({ $match: { 'usd':  { $gte: minUsd}  } });
+    if (currency) {
+      pines.push({ $match: { 'currency':  currency  } });
+    }
+    if (type) {
+      pines.push({ $match: { 'type_name':  { $regex: (type + ".*"), $options: 'i' } } });
+    }
+    if (flow == 'prev') {
+      pines.push({ $match: { 'to':  account  } });
+    }
+    if (flow == 'next') {
+      pines.push({ $match: { 'from':  account  } });
+    }
+    pines.push({ $sort: { 'date': -1 } });
+    const transactions = await transactionCollection.aggregate(pines).toArray();
+
+    res.status(200).json({
+      success: true,
+      data: transactions
+    });
+  }
 }

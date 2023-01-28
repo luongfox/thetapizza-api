@@ -204,8 +204,8 @@ async function main() {
       continue;
     }
 
-    let canTweet = item.usd >= 300000;
-    canTweet = canTweet || (item.currency == 'tdrop' && item.usd >= 100000);
+    let canTweet = item.usd >= 500000;
+    canTweet = canTweet || (item.currency == 'tdrop' && item.usd >= 200000);
     canTweet = canTweet || ['stake_validator', 'withdraw_validator'].includes(item.type_name);
 
     if (canTweet) {
